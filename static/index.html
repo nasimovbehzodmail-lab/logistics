@@ -170,7 +170,7 @@
         <input type="date" id="filterFrom" onchange="loadVehicles()" style="padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--surface); color:var(--text);">
         <span style="color:var(--muted); font-size:13px;">—</span>
         <input type="date" id="filterTo" onchange="loadVehicles()" style="padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--surface); color:var(--text);">
-        <button class="btn" onclick="clearFilter()" style="padding:6px 10px; font-size:13px;"><i class="ti ti-x"></i></button>
+        <button class="btn" onclick="clearFilter()" title="Filterni tozalash" style="padding:6px 10px; font-size:13px;"><i class="ti ti-x"></i></button>
         <button class="btn green" onclick="exportExcel()">
           <i class="ti ti-download"></i> Excel
         </button>
@@ -220,7 +220,14 @@ function switchTab(tab, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById(tab).classList.add('active');
-  if (tab === 'logist') loadVehicles();
+  if (tab === 'logist') {
+    const today = new Date().toISOString().split('T')[0];
+    const f = document.getElementById('filterFrom');
+    const t = document.getElementById('filterTo');
+    if (!f.value) f.value = today;
+    if (!t.value) t.value = today;
+    loadVehicles();
+  }
 }
 
 function showToast(msg, isError = false) {
