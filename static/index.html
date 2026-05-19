@@ -41,11 +41,6 @@
   input, select, textarea { padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--surface); color: var(--text); width: 100%; transition: border-color 0.15s; }
   input:focus, select:focus { outline: none; border-color: var(--text); }
   .required-star { color: var(--red); }
-  .ac-wrap { position: relative; }
-  .ac-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); z-index: 100; max-height: 200px; overflow-y: auto; margin-top: 2px; }
-  .ac-item { padding: 9px 12px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text); }
-  .ac-item:hover, .ac-item.selected { background: var(--bg); }
-  .ac-item i { color: var(--hint); font-size: 14px; }
   .btn { padding: 9px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: all 0.15s; }
   .btn:hover { background: var(--bg); }
   .btn.primary { background: var(--text); color: #fff; border-color: var(--text); }
@@ -53,7 +48,7 @@
   .btn.green { background: var(--green); color: #fff; border-color: var(--green); }
   .btn.green:hover { opacity: 0.9; }
   .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
   .stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
   .stat-value { font-size: 20px; font-weight: 600; }
@@ -212,10 +207,6 @@ function fillDatalist(listId, field) {
     .join('');
 }
 
-function acShow() {}
-function acHide() {}
-function acPick() {}
-
 loadSuggestions();
 
 function switchTab(tab, el) {
@@ -307,7 +298,6 @@ async function loadVehicles() {
         <td>${v.weight ? v.weight + ' t' : '—'}</td>
         <td class="price-client">${v.client_price.toLocaleString('uz-UZ')}</td>
         <td style="color:var(--muted)">${v.cost_price.toLocaleString('uz-UZ')}</td>
-        <td class="price-profit">${v.profit.toLocaleString('uz-UZ')}</td>
         <td style="color:var(--hint); font-size:12px">${new Date(v.created_at).toLocaleDateString('uz-UZ')}</td>
         <td><button class="del-btn" onclick="deleteVehicle(${v.id})"><i class="ti ti-trash"></i></button></td>
       </tr>
@@ -317,7 +307,7 @@ async function loadVehicles() {
       <table>
         <thead><tr>
           <th>#</th><th>Raqam</th><th>Model</th><th>Yo'nalish</th><th>Yuk turi</th>
-          <th>Og'irlik</th><th>Mijoz narxi</th><th>Xarajat</th>
+          <th>Og'irlik</th><th>Mijoz narxi</th><th>Xarajat</th><th>Sana</th><th></th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
