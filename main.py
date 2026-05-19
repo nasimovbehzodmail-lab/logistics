@@ -60,7 +60,7 @@ def get_vehicles():
         vehicles = []
         for r in rows:
             v = dict(r)
-            v["profit"] = v["client_price"] - v["cost_price"]
+            v.pop("profit", None)
             vehicles.append(v)
         total_client = sum(v["client_price"] for v in vehicles)
         total_profit = sum(v["profit"] for v in vehicles)
