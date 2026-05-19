@@ -40,7 +40,6 @@ def add_vehicle(v: VehicleCreate):
             RETURNING *
         """, (v.plate_number, v.model, v.from_city, v.to_city, v.cargo_type, v.weight, v.client_price, v.cost_price, v.note))
         row = dict(cur.fetchone())
-        row["profit"] = row["client_price"] - row["cost_price"]
         conn.commit()
         return {"success": True, "vehicle": row}
     except Exception as e:
@@ -57,11 +56,7 @@ def get_vehicles():
     try:
         cur.execute("SELECT * FROM vehicles ORDER BY created_at DESC")
         rows = cur.fetchall()
-        vehicles = []
-        for r in rows:
-            v = dict(r)
-            v.pop("profit", None)
-            vehicles.append(v)
+        vehicles = [dict(r) for r in rows]
         total_client = sum(v["client_price"] for v in vehicles)
         total_profit = sum(v["profit"] for v in vehicles)
         return {
