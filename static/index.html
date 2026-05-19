@@ -166,9 +166,15 @@
   <div class="table-wrap">
     <div class="table-header">
       <span class="table-title">Barcha mashinalar</span>
-      <button class="btn green" onclick="exportExcel()">
-        <i class="ti ti-download"></i> Excel
-      </button>
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <input type="date" id="filterFrom" onchange="loadVehicles()" style="padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--surface); color:var(--text);">
+        <span style="color:var(--muted); font-size:13px;">—</span>
+        <input type="date" id="filterTo" onchange="loadVehicles()" style="padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--surface); color:var(--text);">
+        <button class="btn" onclick="clearFilter()" style="padding:6px 10px; font-size:13px;"><i class="ti ti-x"></i></button>
+        <button class="btn green" onclick="exportExcel()">
+          <i class="ti ti-download"></i> Excel
+        </button>
+      </div>
     </div>
     <div id="tableContainer">
       <div class="loading"><i class="ti ti-loader" style="font-size:24px; display:block; margin-bottom:8px"></i>Yuklanmoqda...</div>
@@ -272,6 +278,11 @@ async function addVehicle() {
 
 function clearForm() {
   ['plateNum','model','fromCity','toCity','weight','clientPrice','costPrice','note','cargoType'].forEach(id => document.getElementById(id).value = '');
+function clearFilter() {
+  document.getElementById("filterFrom").value = "";
+  document.getElementById("filterTo").value = "";
+  loadVehicles();
+}
 }
 
 async function loadVehicles() {
@@ -280,15 +291,21 @@ async function loadVehicles() {
     const res = await fetch(API + '/api/vehicles');
     const data = await res.json();
 
-    document.getElementById('totalCount').textContent = data.total_count;
-    document.getElementById('totalClient').textContent = fmt(data.total_client_price);
+    const fromVal = document.getElementById('filterFrom').value;
+    const toVal = document.getElementById('filterTo').value;
+    let vehicles = data.vehicles;
+    if (fromVal) vehicles = vehicles.filter(v => new Date(v.created_at) >= new Date(fromVal));
+    if (toVal) { const toDate = new Date(toVal); toDate.setHours(23,59,59,999); vehicles = vehicles.filter(v => new Date(v.created_at) <= toDate); }
 
-    if (data.vehicles.length === 0) {
+    document.getElementById('totalCount').textContent = vehicles.length;
+    document.getElementById('totalClient').textContent = fmt(vehicles.reduce((s, v) => s + v.client_price, 0));
+
+    if (vehicles.length === 0) {
       document.getElementById('tableContainer').innerHTML = '<div class="empty-state"><i class="ti ti-inbox"></i>Hali mashina qo\'shilmagan</div>';
       return;
     }
 
-    const rows = data.vehicles.map((v, i) => `
+    const rows = vehicles.map((v, i) => `
       <tr>
         <td style="color:var(--hint); font-size:12px">${i + 1}</td>
         <td><span class="plate">${v.plate_number}</span></td>
